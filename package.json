@@ -1,0 +1,35 @@
+{
+  "name": "260826_officecli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup:azure": "bash scripts/setup-azure.sh",
+    "check:mail": "tsx src/check-mail.ts",
+    "start": "tsx src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/watanabe-tsubasa/260826_officecli.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/watanabe-tsubasa/260826_officecli/issues"
+  },
+  "homepage": "https://github.com/watanabe-tsubasa/260826_officecli#readme",
+  "dependencies": {
+    "@azure/msal-node": "^5.6.0",
+    "@types/node": "^26.3.0",
+    "opencode-ai": "^1.18.21",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "@officecli/officecli": "^1.0.144",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  }
+}
