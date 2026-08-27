@@ -16,14 +16,7 @@
   },
 
   "permission": {
-    "bash": "deny",
-    "edit": "deny",
-    "read": "deny",
-    "glob": "deny",
-    "grep": "deny",
-    "webfetch": "deny",
-    "websearch": "deny",
-    "external_directory": "deny",
+    "*": "deny",
     "officecli_*": "allow"
   }
 }
