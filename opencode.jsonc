@@ -10,7 +10,8 @@
       ],
       "enabled": true,
       "environment": {
-        "OFFICECLI_SKIP_UPDATE": "1"
+        "OFFICECLI_SKIP_UPDATE": "1",
+        "OFFICECLI_NO_AUTO_RESIDENT": "1"
       }
     }
   },
