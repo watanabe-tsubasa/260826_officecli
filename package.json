@@ -25,7 +25,6 @@
     "@azure/msal-node": "^5.6.0",
     "@types/node": "^26.3.0",
     "opencode-ai": "1.18.21",
-    "@officecli/officecli": "1.0.144",
     "dotenv": "^17.4.2"
   },
   "devDependencies": {

@@ -88,112 +88,50 @@ AIエージェントがPowerPointを作成し、元のメールへの返信と�
 ターミナルが開いたら、依存パッケージをインストールします。
 
 ```bash
-curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 npm ci
 ```
 
-### 2. 各ツールを確認
+Codespaces側ですでに依存関係がインストールされている場合でも、ハンズオンでは `package-lock.json` に基づく環境へ揃えるため、`npm ci` を実行してください。
+
+### 2. Office CLIをインストール
+
+Office CLIは、ハンズオンで追加する外部ツールとして参加者自身でインストールします。
+
+```bash
+npm install --no-save @officecli/officecli@1.0.145
+```
+
+`--no-save` を付けることで、ハンズオン環境の `node_modules` にはOffice CLIを追加しつつ、`package.json` と `package-lock.json` は変更しません。
+
+インストール直後に、Office CLIの自動更新を無効化します。
+
+```bash
+OFFICECLI_SKIP_UPDATE=1 npx officecli config autoUpdate false
+```
+
+体験会中にOffice CLIのバージョンが自動更新されて挙動が変わることを防ぐための設定です。
+
+続いて、インストールされたバージョンを確認します。
+
+```bash
+OFFICECLI_SKIP_UPDATE=1 npx officecli --version
+```
+
+次のように表示されることを確認してください。
+
+```text
+1.0.145
+```
+
+### 3. 各ツールを確認
 
 ```bash
 node --version
 npm --version
-az version
 npx opencode --version
-npx officecli --version
 ```
 
 それぞれバージョン情報が表示されれば問題ありません。
-
-## Azure / Microsoft Graphの準備
-
-### 1. Azure CLIでログイン
-
-```bash
-az login --use-device-code
-```
-
-ターミナルに表示された案内に従い、Azureアカウントでログインします。
-
-ログイン後、利用中のSubscriptionを確認します。
-
-```bash
-az account show -o table
-```
-
-複数のSubscriptionがある場合は、次のコマンドで確認できます。
-
-```bash
-az account list -o table
-```
-
-必要に応じて利用するSubscriptionを指定します。
-
-```bash
-az account set --subscription "SUBSCRIPTION_ID"
-```
-
-### 2. Microsoft Graph用アプリを作成
-
-```bash
-npm run setup:azure
-```
-
-このスクリプトでは、自分のMicrosoft Entra環境に
-
-```text
-ProtoOut Office Mail Agent
-```
-
-というアプリを登録します。
-
-主に次の権限を利用します。
-
-* `Mail.ReadWrite`
-* `Mail.Send`
-
-正常に完了すると `.env` が作成されます。
-
-```text
-MICROSOFT_CLIENT_ID=...
-MICROSOFT_AUTHORITY=https://login.microsoftonline.com/consumers
-MAIL_SUBJECT_PREFIX=[OFFICE-AI]
-POLL_INTERVAL_MS=10000
-```
-
-`.env` はGitHubへコミットしないでください。
-
-## Outlookとの接続確認
-
-まず、AIエージェントを動かす前にMicrosoft Graphからメールを取得できるか確認します。
-
-別のメールアドレスから、自分のOutlook.comアドレスへ次のようなメールを送信します。
-
-```text
-件名:
-[OFFICE-AI] テスト
-
-本文:
-メール取得テストです。
-```
-
-メールは未読のままにしておきます。
-
-続いて次を実行します。
-
-```bash
-npm run check:mail
-```
-
-初回実行時にはDevice Code認証が表示されます。
-
-案内に従ってMicrosoftアカウントへログインし、
-
-* メールの読み取り・書き込み
-* メールの送信
-
-に関する権限を許可します。
-
-ターミナルにメールの件名や本文が表示されれば、Microsoft Graphとの接続は成功です。
 
 ## OpenCodeの準備
 
@@ -235,7 +173,109 @@ npx opencode mcp list
 
 `officecli` が接続済みとして表示されれば成功です。
 
-## AIエージェントを起動
+## Azure / Microsoft Graphの準備
+
+### 1. Azure CLIをインストール
+
+Azure CLIをインストールし、バージョン情報が表示されることを確認します。
+
+```bash
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+az version
+```
+
+### 2. Azure CLIでログイン
+
+```bash
+az login --use-device-code
+```
+
+ターミナルに表示された案内に従い、Azureアカウントでログインします。
+
+ログイン後、利用中のSubscriptionを確認します。
+
+```bash
+az account show -o table
+```
+
+複数のSubscriptionがある場合は、次のコマンドで確認できます。
+
+```bash
+az account list -o table
+```
+
+必要に応じて利用するSubscriptionを指定します。
+
+```bash
+az account set --subscription "SUBSCRIPTION_ID"
+```
+
+### 3. Microsoft Graph用アプリを作成
+
+```bash
+npm run setup:azure
+```
+
+このスクリプトでは、自分のMicrosoft Entra環境に
+
+```text
+ProtoOut Office Mail Agent
+```
+
+というアプリを登録します。
+
+主に次の権限を利用します。
+
+* `Mail.ReadWrite`
+* `Mail.Send`
+
+正常に完了すると `.env` が作成されます。
+
+```text
+MICROSOFT_CLIENT_ID=...
+MICROSOFT_AUTHORITY=https://login.microsoftonline.com/consumers
+MAIL_SUBJECT_PREFIX=[OFFICE-AI]
+POLL_INTERVAL_MS=10000
+```
+
+`.env` はGitHubへコミットしないでください。
+
+リポジトリの `.env.example` は設定内容の参考用です。実際に使用する `.env` は `npm run setup:azure` によって生成されます。
+
+## Outlookとの接続確認
+
+まず、AIエージェントを動かす前にMicrosoft Graphからメールを取得できるか確認します。
+
+別のメールアドレスから、自分のOutlook.comアドレスへ次のようなメールを送信します。
+
+```text
+件名:
+[OFFICE-AI] テスト
+
+本文:
+メール取得テストです。
+```
+
+メールは未読のままにしておきます。
+
+続いて次を実行します。
+
+```bash
+npm run check:mail
+```
+
+初回実行時にはDevice Code認証が表示されます。
+
+案内に従ってMicrosoftアカウントへログインし、
+
+* メールの読み取り・書き込み
+* メールの送信
+
+に関する権限を許可します。
+
+ターミナルにメールの件名や本文が表示されれば、Microsoft Graphとの接続は成功です。
+
+## E2E: AIエージェントを起動
 
 すべての準備が完了したら、次を実行します。
 
@@ -331,7 +371,7 @@ Outlookを監視し、Office資料を作成するAIエージェントを起動�
 │   ├── check-mail.ts
 │   ├── agent.ts
 │   └── index.ts
-├── output/
+├── output/                  # src/agent.tsの実行時に自動生成
 ├── opencode.jsonc
 ├── .env.example
 ├── .gitignore
@@ -404,6 +444,8 @@ Microsoft Graphで利用する権限を定義しています。
 ### `opencode.jsonc`
 
 OpenCodeとOffice CLI MCPを接続する設定です。
+
+Office CLI自体は `package.json` では管理せず、ハンズオン中に `npm install --no-save` でインストールします。
 
 ## このサンプルを読んでみる
 
